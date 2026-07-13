@@ -43,9 +43,13 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Slot Parkir</label>
                         <select name="parking_slot_id" required class="w-full border-gray-300 rounded-md shadow-sm text-sm">
                             <option value="">-- Pilih Slot Available --</option>
-                            @foreach($slots as $slot)
-                                <option value="{{ $slot->id }}">Slot {{ $slot->nomor_slot }} (Lantai {{ $slot->lantai }})</option>
-                            @endforeach
+                            @forelse($slots as $slot)
+                                <option value="{{ $slot->id }}">
+                                    Slot {{ $slot->nomor_slot ?? $slot->nama_slot ?? $slot->id }} (Lantai {{ $slot->lantai ?? '1' }})
+                                </option>
+                            @empty
+                                <option value="" disabled>Belum ada slot parkir tersedia</option>
+                            @endforelse
                         </select>
                     </div>
 
@@ -85,7 +89,7 @@
                                 <div class="flex justify-between items-start mb-2">
                                     <div>
                                         <span class="text-xs font-bold text-emerald-700 uppercase bg-emerald-100 px-2 py-0.5 rounded">
-                                            Lantai {{ $approved->parkingSlot->lantai ?? '-' }}
+                                            Lantai {{ $approved->parkingSlot->lantai ?? '1' }}
                                         </span>
                                         <h4 class="text-2xl font-black text-gray-800 mt-1">
                                             Slot {{ $approved->parkingSlot->nomor_slot ?? '-' }}
@@ -119,7 +123,7 @@
                     </div>
                 @else
                     <div class="text-center py-6 bg-gray-50 rounded-lg border border-dashed border-gray-200">
-                        <p class="text-sm text-gray-500 italic">Belum ada booking yang disetujui atau masih menunggu verifikasi admin.</p>
+                        <p class="text-sm text-gray-500 italic">Belum ada slot parkir yang disetujui atau masih menunggu verifikasi admin.</p>
                     </div>
                 @endif
             </div>

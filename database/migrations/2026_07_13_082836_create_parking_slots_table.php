@@ -10,16 +10,18 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('parking_slots', function (Blueprint $table) {
-        $table->id();
-        $table->string('nomor_slot')->unique(); // <-- KOLOM INI WAJIB ADA
-        $table->string('lantai')->default('Lantai 1');
-        $table->enum('status', ['available', 'booked', 'maintenance'])->default('available');
-        $table->integer('harga_per_jam')->default(5000);
-        $table->timestamps();
-    });
-}
+    {
+        Schema::create('parking_slots', function (Blueprint $table) {
+            $table->id();
+            $table->string('nomor_slot')->unique(); // Contoh: A-01, A-02, B-01
+            $table->integer('lantai')->default(1);  // Contoh: 1, 2, 3
+
+            // Menggunakan string agar lebih fleksibel (bisa 'tersedia', 'available', 'terisi', 'booked', dll)
+            $table->string('status')->default('tersedia');
+
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

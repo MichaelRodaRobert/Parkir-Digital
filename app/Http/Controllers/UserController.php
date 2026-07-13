@@ -3,39 +3,49 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\ParkingSlot;
 use App\Models\Booking;
 use App\Models\Payment;
-use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    /**
+     * Halaman Dashboard Utama User
+     */
     public function index()
-{
-    $userId = Auth::id();
+    {
+        $userId = Auth::id();
 
-    // Slot Parkir yang tersedia untuk pilihan form
-    $slots = ParkingSlot::where('status', 'tersedia')->get();
+        // 1. Mengambil Slot Parkir yang Tersedia untuk Pilihan Form
+        $slots = ParkingSlot::where(function($q) {
+            $q->where('status', 'tersedia')
+              ->orWhere('status', 'Tersedia')
+              ->orWhereNull('status');
+        })->get();
 
-    // 1. Slot Parkir Saya: Tampilkan SEMUA booking yang sudah disetujui Admin (termasuk yang sudah lunas)
-    $approvedBookings = Booking::with('parkingSlot', 'payment')
-        ->where('user_id', $userId)
-        ->where('status', 'disetujui')
-        ->latest()
-        ->get();
+        // 2. Slot Parkir Saya: Tampilkan SEMUA booking yang sudah disetujui Admin
+        $approvedBookings = Booking::with(['parkingSlot', 'payment'])
+            ->where('user_id', $userId)
+            ->where('status', 'disetujui')
+            ->latest()
+            ->get();
 
-    // 2. Tabel Pengajuan: Hanya tampilkan booking yang MASIH PROSES (Pending / Disetujui tapi belum lunas)
-    $myBookings = Booking::with('parkingSlot', 'payment')
-        ->where('user_id', $userId)
-        ->whereDoesntHave('payment', function($q) {
-            $q->where('status', 'valid');
-        })
-        ->latest()
-        ->get();
+        // 3. Tabel Pengajuan: Booking yang belum lunas
+        $myBookings = Booking::with(['parkingSlot', 'payment'])
+            ->where('user_id', $userId)
+            ->whereDoesntHave('payment', function($q) {
+                $q->where('status', 'valid');
+            })
+            ->latest()
+            ->get();
 
-    return view('user.dashboard', compact('slots', 'approvedBookings', 'myBookings'));
-}
+        return view('user.dashboard', compact('slots', 'approvedBookings', 'myBookings'));
+    }
 
+    /**
+     * Proses Pemesanan / Booking Slot Parkir
+     */
     public function storeBooking(Request $request)
     {
         $request->validate([
@@ -43,19 +53,6 @@ class UserController extends Controller
             'waktu_mulai' => 'required|date',
             'waktu_selesai' => 'required|date|after:waktu_mulai',
         ]);
-
-        // Cek Bentrok Waktu (Overlap)
-        $isOverlapping = Booking::where('parking_slot_id', $request->parking_slot_id)
-            ->whereIn('status', ['pending', 'disetujui'])
-            ->where(function ($query) use ($request) {
-                $query->where('waktu_mulai', '<', $request->waktu_selesai)
-                      ->where('waktu_selesai', '>', $request->waktu_mulai);
-            })
-            ->exists();
-
-        if ($isOverlapping) {
-            return redirect()->back()->with('error', 'Slot parkir ini sudah dibooking pada rentang waktu tersebut. Silakan pilih slot atau waktu lain!');
-        }
 
         Booking::create([
             'user_id' => Auth::id(),
@@ -65,36 +62,44 @@ class UserController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect()->back()->with('success', 'Pemesanan parkir berhasil diajukan!');
+        return redirect()->back()->with('success', 'Pengajuan booking berhasil dikirim! Menunggu persetujuan admin.');
     }
 
-    public function storePayment($booking_id)
+    /**
+     * Proses Kirim Pembayaran Booking
+     */
+    public function storePayment(Request $request, $bookingId)
     {
-        $existingPayment = Payment::where('booking_id', $booking_id)->first();
+        $booking = Booking::where('user_id', Auth::id())->findOrFail($bookingId);
 
-        if (!$existingPayment) {
+        // Cek apakah sudah ada pembayaran
+        if (!$booking->payment) {
             Payment::create([
-                'booking_id' => $booking_id,
-                'jumlah_bayar' => 10000,
-                'bukti_pembayaran' => '-',
+                'booking_id' => $booking->id,
                 'status' => 'pending',
+                'metode_pembayaran' => 'Transfer',
             ]);
         }
 
-        return redirect()->back()->with('success', 'Pembayaran berhasil dikirim! Menunggu konfirmasi admin.');
+        return redirect()->back()->with('success', 'Konfirmasi pembayaran berhasil dikirim! Menunggu verifikasi admin.');
     }
 
-    // METHOD BARU: Menampilkan Halaman Riwayat Pembayaran yang Sudah Dibayar / Valid
-    public function historyPayments()
+    /**
+     * Halaman Riwayat Lunas
+     */
+    public function paymentHistory()
     {
-        $paidPayments = Payment::with(['booking.parkingSlot'])
-            ->whereHas('booking', function ($query) {
-                $query->where('user_id', Auth::id());
+        $userId = Auth::id();
+
+        // Mengambil semua booking milik user yang pembayaran-nya sudah Valid / Lunas
+        $paidBookings = Booking::with(['parkingSlot', 'payment'])
+            ->where('user_id', $userId)
+            ->whereHas('payment', function($q) {
+                $q->where('status', 'valid');
             })
-            ->where('status', 'valid')
             ->latest()
             ->get();
 
-        return view('user.payments_history', compact('paidPayments'));
+        return view('user.history', compact('paidBookings'));
     }
 }
