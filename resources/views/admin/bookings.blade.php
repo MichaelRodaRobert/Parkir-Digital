@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Verifikasi Pembayaran Parkir') }}
+            {{ __('Verifikasi Pemesanan Slot Parkir') }}
         </h2>
     </x-slot>
 
@@ -17,7 +17,7 @@
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">Daftar Verifikasi Pembayaran</h3>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Daftar Pengajuan Booking Parkir</h3>
 
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
@@ -25,38 +25,40 @@
                                 <tr class="bg-gray-50">
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pengguna</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Slot Parkir</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah Bayar</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status Pembayaran</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu Booking</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi Verifikasi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($payments as $payment)
+                                @forelse($bookings as $booking)
                                     <tr>
-                                        <!-- Nama Pengguna -->
+                                        <!-- Pengguna -->
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
-                                            {{ $payment->booking->user->name ?? '-' }}
+                                            {{ $booking->user->name ?? '-' }}
+                                            <div class="text-xs font-normal text-gray-500">{{ $booking->user->email ?? '' }}</div>
                                         </td>
 
                                         <!-- Slot Parkir -->
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                            Slot {{ $payment->booking->parkingSlot->nomor_slot ?? '-' }}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">
+                                            Slot {{ $booking->parkingSlot->nomor_slot ?? '-' }}
                                         </td>
 
-                                        <!-- Jumlah Bayar -->
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-semibold">
-                                            Rp {{ number_format($payment->jumlah_bayar, 0, ',', '.') }}
+                                        <!-- Waktu Booking -->
+                                        <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
+                                            <div>{{ $booking->waktu_mulai }}</div>
+                                            <div class="text-gray-400">s/d {{ $booking->waktu_selesai }}</div>
                                         </td>
 
-                                        <!-- Status Pembayaran -->
+                                        <!-- Status -->
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            @if($payment->status == 'valid')
+                                            @if($booking->status == 'disetujui')
                                                 <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-green-100 text-green-800">
-                                                    Valid
+                                                    Disetujui
                                                 </span>
-                                            @elseif($payment->status == 'invalid')
+                                            @elseif($booking->status == 'ditolak')
                                                 <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-red-100 text-red-800">
-                                                    Ditolak / Invalid
+                                                    Ditolak
                                                 </span>
                                             @else
                                                 <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-yellow-100 text-yellow-800">
@@ -67,42 +69,42 @@
 
                                         <!-- Kolom Aksi Verifikasi -->
                                         <td class="px-6 py-4 whitespace-nowrap text-center">
-                                            @if($payment->status == 'pending')
-                                                {{-- Tombol Aksi Tampil Jika Status Masih Pending --}}
+                                            @if($booking->status == 'pending')
+                                                {{-- Tombol Aksi Tampil Hanya Jika Status Masih Pending --}}
                                                 <div class="flex justify-center space-x-2">
-                                                    <!-- Tombol Terima / Valid -->
-                                                    <form action="{{ route('admin.payments.update', $payment->id) }}" method="POST">
+                                                    <!-- Tombol Setujui -->
+                                                    <form action="{{ route('admin.bookings.update', $booking->id) }}" method="POST">
                                                         @csrf
-                                                        <input type="hidden" name="status" value="valid">
+                                                        <input type="hidden" name="status" value="disetujui">
                                                         <button type="submit"
-                                                                onclick="return confirm('Terima pembayaran ini?')"
+                                                                onclick="return confirm('Setujui pemesanan ini?')"
                                                                 style="background-color: #16a34a; color: white;"
                                                                 class="px-3 py-1.5 font-bold text-xs rounded-md shadow transition hover:opacity-90">
-                                                            ✓ Terima Pembayaran
+                                                            ✓ Setujui
                                                         </button>
                                                     </form>
 
-                                                    <!-- Tombol Tolak / Invalid -->
-                                                    <form action="{{ route('admin.payments.update', $payment->id) }}" method="POST">
+                                                    <!-- Tombol Tolak -->
+                                                    <form action="{{ route('admin.bookings.update', $booking->id) }}" method="POST">
                                                         @csrf
-                                                        <input type="hidden" name="status" value="invalid">
+                                                        <input type="hidden" name="status" value="ditolak">
                                                         <button type="submit"
-                                                                onclick="return confirm('Tolak pembayaran ini?')"
+                                                                onclick="return confirm('Tolak pemesanan ini?')"
                                                                 style="background-color: #dc2626; color: white;"
                                                                 class="px-3 py-1.5 font-bold text-xs rounded-md shadow transition hover:opacity-90">
                                                             ✕ Tolak
                                                         </button>
                                                     </form>
                                                 </div>
-                                            @elseif($payment->status == 'valid')
-                                                {{-- Jika Sudah Valid / Diterima --}}
+                                            @elseif($booking->status == 'disetujui')
+                                                {{-- Tampilan Setelah Disetujui --}}
                                                 <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-green-100 text-green-800 border border-green-300">
-                                                    ✓ Sudah Dikonfirmasi
+                                                    ✓ Sudah Disetujui
                                                 </span>
                                             @else
-                                                {{-- Jika Ditolak --}}
+                                                {{-- Tampilan Setelah Ditolak --}}
                                                 <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-red-100 text-red-800 border border-red-300">
-                                                    ✕ Pembayaran Ditolak
+                                                    ✕ Pemesanan Ditolak
                                                 </span>
                                             @endif
                                         </td>
@@ -110,7 +112,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
-                                            Belum ada data pembayaran untuk diverifikasi.
+                                            Belum ada data pemesanan slot parkir.
                                         </td>
                                     </tr>
                                 @endforelse

@@ -45,7 +45,7 @@
                                 <h4 class="font-bold">{{ $item->judul }}</h4>
                                 <p class="text-sm text-gray-600">{{ $item->isi }}</p>
                             </div>
-                            <form action="{{ route('admin.announcements.destroy', $item->id) }}" method="POST">
+                            <form aphp artisan servection="{{ route('admin.announcements.destroy', $item->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded text-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>

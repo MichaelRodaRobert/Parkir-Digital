@@ -11,22 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // 1. Membuat Tabel Users beserta kolom role & status_pendaftaran
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('role')->default('pengguna'); // Kolom role
+            $table->string('status_pendaftaran')->default('pending'); // Kolom status
             $table->rememberToken();
             $table->timestamps();
         });
 
+        // 2. Membuat Tabel Password Reset Tokens
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
+        // 3. Membuat Tabel Sessions
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
