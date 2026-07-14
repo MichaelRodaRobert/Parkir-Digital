@@ -103,10 +103,18 @@
 
         <div class="divider"></div>
 
+        <!-- STATUS DINAMIS DI STRUK -->
         <div class="row">
-            <span>Status Bayar:</span>
-            <span class="bold" style="color: #16a34a;">LUNAS</span>
+            <span>Status Booking:</span>
+            @if($booking->status === 'disetujui')
+                <span class="bold" style="color: #16a34a;">BOOKING DISETUJUI</span>
+            @elseif($booking->status === 'pending')
+                <span class="bold" style="color: #d97706;">PENDING (MENUNGGU ACC)</span>
+            @else
+                <span class="bold" style="color: #dc2626;">DITOLAK</span>
+            @endif
         </div>
+
         <div class="row" style="font-size: 15px; margin-top: 8px;">
             <span class="bold">TOTAL:</span>
             <span class="bold">Rp {{ number_format($booking->total_harga ?? 20000, 0, ',', '.') }}</span>
@@ -127,7 +135,6 @@
     </div>
 
     <script>
-        // Otomatis memicu dialog print saat halaman pertama kali dibuka
         window.onload = function() {
             window.print();
         }

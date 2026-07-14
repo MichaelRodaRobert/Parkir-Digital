@@ -12,9 +12,7 @@
             @if(Auth::user()->status_pendaftaran !== 'disetujui')
                 <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md shadow-sm">
                     <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            ⏳
-                        </div>
+                        <div class="flex-shrink-0">⏳</div>
                         <div class="ml-3">
                             <p class="text-sm font-bold text-yellow-800">
                                 Akun Anda Sedang Menunggu Verifikasi Admin!
@@ -130,23 +128,31 @@
                 </div>
             @endif
 
-            <!-- TIKET & STRUK PARKIR SIAP DICETAK -->
-            @php
-                $approvedBookings = isset($myBookings) ? $myBookings->where('status', 'disetujui') : collect();
-            @endphp
-
-            @if($approvedBookings->count() > 0)
+            <!-- 🎟️ TIKET & STRUK PARKIR (MEMUAT PENDING & DISETUJUI) -->
+            @if(isset($myBookings) && $myBookings->count() > 0)
                 <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
                     <h3 class="text-lg font-bold text-gray-800 mb-4">🎟️ Tiket & Struk Parkir Anda</h3>
 
                     <div class="space-y-3">
-                        @foreach($approvedBookings as $b)
+                        @foreach($myBookings as $b)
                             <div class="p-4 rounded-lg border border-gray-200 bg-gray-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                 <div>
                                     <div class="flex items-center gap-2 mb-1">
-                                        <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-green-100 text-green-800">
-                                            ✓ Booking Disetujui
-                                        </span>
+                                        <!-- DYNAMIC KETERANGAN STATUS -->
+                                        @if($b->status === 'disetujui')
+                                            <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-green-100 text-green-800">
+                                                ✓ Booking Disetujui
+                                            </span>
+                                        @elseif($b->status === 'pending')
+                                            <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-yellow-100 text-yellow-800">
+                                                ⏳ Pending (Menunggu ACC Admin)
+                                            </span>
+                                        @else
+                                            <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-red-100 text-red-800">
+                                                ✕ Ditolak
+                                            </span>
+                                        @endif
+
                                         <span class="text-xs text-gray-500 font-mono">Kode Tiket: #PRK-{{ str_pad($b->id, 5, '0', STR_PAD_LEFT) }}</span>
                                     </div>
                                     <p class="text-sm font-bold text-gray-800">
@@ -160,12 +166,12 @@
                                     </p>
                                 </div>
 
-                                <!-- Tombol Cetak Struk (Membuka Tab Baru Aman tanpa 404 saat back) -->
+                                <!-- Tombol Cetak Struk -->
                                 <div>
                                     <a href="{{ route('user.booking.receipt', $b->id) }}"
                                        target="_blank"
                                        class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-md shadow transition">
-                                        <span>🖨️</span> Cetak Struk
+                                        <span>🖨️</span> Lihat Struk
                                     </a>
                                 </div>
                             </div>

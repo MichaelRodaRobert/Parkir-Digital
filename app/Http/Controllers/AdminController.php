@@ -7,29 +7,39 @@ use App\Models\User;
 use App\Models\ParkingSlot;
 use App\Models\Booking;
 use App\Models\Payment;
+use Carbon\Carbon;
+
 
 class AdminController extends Controller
 {
     public function dashboard()
-    {
-        $totalUsers = User::where('role', 'user')->count();
-        $pendingUsers = User::where('role', 'user')
-            ->where(function($q) {
-                $q->where('status_pendaftaran', 'pending')
-                  ->orWhereNull('status_pendaftaran');
-            })->count();
+{
+    $totalSemuaSlot = ParkingSlot::count();
+    $sekarang = Carbon::now();
 
-        $totalSlots = ParkingSlot::count();
-        $pendingBookings = Booking::where('status', 'pending')->count();
-        $pendingPayments = Payment::where('status', 'pending')->count();
+    // Hitung slot yang SEDANG TERISI/TERPAKAI PADA JAM SEKARANG
+    $slotTerpakaiSaatIni = Booking::whereIn('status', ['pending', 'disetujui'])
+        ->where('waktu_mulai', '<=', $sekarang)
+        ->where('waktu_selesai', '>=', $sekarang)
+        ->pluck('parking_slot_id')
+        ->unique()
+        ->count();
 
-        return view('admin.dashboard', compact(
-            'totalUsers',
-            'pendingUsers',
-            'totalSlots',
-            'pendingBookings',
-            'pendingPayments'
-        ));
+    // Sisa slot tersedia saat ini di lokasi
+    $totalSlot = max(0, $totalSemuaSlot - $slotTerpakaiSaatIni);
+
+    $totalUsers = User::where('role', 'user')->count();
+    $pendingBookings = Booking::where('status', 'pending')->count();
+    $totalPayments = Booking::where('status', 'disetujui')->sum('total_harga') ?? 0;
+
+    return view('admin.dashboard', compact(
+        'totalSlot',
+        'totalSemuaSlot',
+        'slotTerpakaiSaatIni',
+        'totalUsers',
+        'pendingBookings',
+        'totalPayments'
+    ));
     }
 
     public function users()

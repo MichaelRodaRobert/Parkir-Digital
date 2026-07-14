@@ -32,9 +32,11 @@
                 </div>
 
                 <!-- 3. Total Slot Parkir -->
-                <div class="bg-white p-5 rounded-lg shadow-sm border border-indigo-200">
-                    <div class="text-xs font-bold text-indigo-600 uppercase">Total Slot Parkir</div>
-                    <div class="text-2xl font-black text-gray-800 mt-2">{{ $totalSlots ?? 0 }}</div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                    <p class="text-xs font-bold text-gray-500 uppercase">SISA SLOT TERSEDIA</p>
+                    <h3 class="text-3xl font-extrabold text-indigo-600 mt-2">
+                        {{ $totalSlot }}
+                    </h3>
                 </div>
 
                 <!-- 4. Pending Booking -->
