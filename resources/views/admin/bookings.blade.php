@@ -73,28 +73,28 @@
                                                 {{-- Tombol Aksi Tampil Hanya Jika Status Masih Pending --}}
                                                 <div class="flex justify-center space-x-2">
                                                     <!-- Tombol Setujui -->
-                                                    <form action="{{ route('admin.bookings.update', $booking->id) }}" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="status" value="disetujui">
-                                                        <button type="submit"
-                                                                onclick="return confirm('Setujui pemesanan ini?')"
-                                                                style="background-color: #16a34a; color: white;"
-                                                                class="px-3 py-1.5 font-bold text-xs rounded-md shadow transition hover:opacity-90">
-                                                            ✓ Setujui
-                                                        </button>
-                                                    </form>
+<form action="{{ route('admin.bookings.approve', $booking->id) }}" method="POST">
+    @csrf
+    @method('PATCH') <!-- WAJIB TAMBAHKAN INI karena route-nya PATCH -->
+    <button type="submit"
+            onclick="return confirm('Setujui pemesanan ini?')"
+            style="background-color: #16a34a; color: white;"
+            class="px-3 py-1.5 font-bold text-xs rounded-md shadow transition hover:opacity-90">
+        ✓ Setujui
+    </button>
+</form>
 
-                                                    <!-- Tombol Tolak -->
-                                                    <form action="{{ route('admin.bookings.update', $booking->id) }}" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="status" value="ditolak">
-                                                        <button type="submit"
-                                                                onclick="return confirm('Tolak pemesanan ini?')"
-                                                                style="background-color: #dc2626; color: white;"
-                                                                class="px-3 py-1.5 font-bold text-xs rounded-md shadow transition hover:opacity-90">
-                                                            ✕ Tolak
-                                                        </button>
-                                                    </form>
+<!-- Tombol Tolak -->
+<form action="{{ route('admin.bookings.reject', $booking->id) }}" method="POST">
+    @csrf
+    @method('PATCH') <!-- WAJIB TAMBAHKAN INI karena route-nya PATCH -->
+    <button type="submit"
+            onclick="return confirm('Yakin ingin menolak pemesanan ini?')"
+            style="background-color: #dc2626; color: white;"
+            class="px-3 py-1.5 font-bold text-xs rounded-md shadow transition hover:opacity-90">
+        ✗ Tolak
+    </button>
+</form>
                                                 </div>
                                             @elseif($booking->status == 'disetujui')
                                                 {{-- Tampilan Setelah Disetujui --}}

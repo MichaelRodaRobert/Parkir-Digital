@@ -7,19 +7,20 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     public function up(): void
-    {
-        Schema::create('payments', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('booking_id')->constrained()->onDelete('cascade');
-            $table->integer('jumlah_bayar')->default(10000);
+{
+    Schema::create('payments', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('booking_id')->constrained('bookings')->onDelete('cascade');
+        $table->integer('jumlah_bayar');
 
-            // <-- PASTIKAN ADA ->nullable()
-            $table->string('bukti_pembayaran')->nullable();
+        // 💡 Tambahkan kolom ini
+        $table->string('metode_pembayaran')->nullable();
+        $table->string('bukti_pembayaran')->nullable(); // nullable agar bisa kosong saat tombol konfirmasi ditekan
 
-            $table->enum('status', ['pending', 'valid', 'invalid'])->default('pending');
-            $table->timestamps();
-        });
-    }
+        $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');
+        $table->timestamps();
+    });
+}
 
     public function down(): void
     {

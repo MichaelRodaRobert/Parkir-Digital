@@ -9,37 +9,25 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckRole
 {
-    /**
-     * Handle an incoming request.
-     */
     public function handle(Request $request, Closure $next, string $role): Response
     {
         if (!Auth::check()) {
             return redirect()->route('login');
         }
 
-        $userRole = strtolower(Auth::user()->role);
-        $targetRole = strtolower($role);
+        $userRole = strtolower(trim(Auth::user()->role));
+        $targetRole = strtolower(trim($role));
 
-        // Menyamakan 'pengguna' dengan 'user'
-        $isUser = in_array($userRole, ['user', 'pengguna']);
-        $isTargetUser = in_array($targetRole, ['user', 'pengguna']);
-
-        // Jika akses sesuai role (Admin -> Admin, atau User/Pengguna -> User)
-        if (($userRole === 'admin' && $targetRole === 'admin') || ($isUser && $isTargetUser)) {
+        // Jika role sesuai, izinkan lewat
+        if ($userRole === $targetRole) {
             return $next($request);
         }
 
-        // Jika Admin mencoba akses route user -> lempar ke dashboard admin
+        // Jika tidak sesuai, alihkan ke tempat yang benar sesuai rolenya
         if ($userRole === 'admin') {
             return redirect()->route('admin.dashboard');
         }
 
-        // Jika Pengguna / User mencoba akses route admin -> lempar ke dashboard user
-        if ($isUser) {
-            return redirect()->route('user.dashboard');
-        }
-
-        abort(403, 'Akses Ditolak: Anda tidak memiliki wewenang.');
+        return redirect()->route('user.dashboard');
     }
 }

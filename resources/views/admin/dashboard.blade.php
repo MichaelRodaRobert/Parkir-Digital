@@ -1,37 +1,60 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Panel Kontrol Admin') }}
+            {{ __('Dashboard Admin') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            {{-- Kartu Ringkasan Statistik --}}
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-500">
-                    <p class="text-sm font-medium text-gray-500">Total Pengguna</p>
-                    <p class="text-2xl font-bold text-gray-800">{{ $totalUsers ?? 0 }}</p>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-yellow-500">
-                    <p class="text-sm font-medium text-gray-500">User Pending Verifikasi</p>
-                    <p class="text-2xl font-bold text-gray-800">{{ $pendingUsers ?? 0 }}</p>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-purple-500">
-                    <p class="text-sm font-medium text-gray-500">Booking Pending</p>
-                    <p class="text-2xl font-bold text-gray-800">{{ $pendingBookings ?? 0 }}</p>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-500">
-                    <p class="text-sm font-medium text-gray-500">Pembayaran Pending</p>
-                    <p class="text-2xl font-bold text-gray-800">{{ $pendingPayments ?? 0 }}</p>
-                </div>
-            </div>
+            <h3 class="text-lg font-bold text-gray-800 mb-6">📊 Ringkasan Sistem Parkir</h3>
 
-            {{-- Informasi Sambutan --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <h3 class="text-lg font-bold mb-2">Selamat Datang di Panel Admin!</h3>
-                <p class="text-gray-600">Gunakan menu navigasi untuk mengelola verifikasi akun pengguna, reservasi slot parkir, dan transaksi pembayaran digital.</p>
+            <!-- Grid Kartu Statistik -->
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+
+                <!-- 1. User Pending Verifikasi -->
+                <div class="bg-white p-5 rounded-lg shadow-sm border border-yellow-300">
+                    <div class="text-xs font-bold text-yellow-600 uppercase">User Pending ACC</div>
+                    <div class="text-2xl font-black text-gray-800 mt-2">{{ $pendingUsers ?? 0 }}</div>
+                    <a href="{{ route('admin.users') }}" class="text-xs text-yellow-600 hover:underline mt-2 inline-block font-semibold">
+                        Verifikasi →
+                    </a>
+                </div>
+
+                <!-- 2. Total Registered Users -->
+                <div class="bg-white p-5 rounded-lg shadow-sm border border-blue-200">
+                    <div class="text-xs font-bold text-blue-600 uppercase">Total User</div>
+                    <div class="text-2xl font-black text-gray-800 mt-2">{{ $totalUsers ?? 0 }}</div>
+                    <a href="{{ route('admin.users') }}" class="text-xs text-blue-600 hover:underline mt-2 inline-block font-semibold">
+                        Lihat Semua →
+                    </a>
+                </div>
+
+                <!-- 3. Total Slot Parkir -->
+                <div class="bg-white p-5 rounded-lg shadow-sm border border-indigo-200">
+                    <div class="text-xs font-bold text-indigo-600 uppercase">Total Slot Parkir</div>
+                    <div class="text-2xl font-black text-gray-800 mt-2">{{ $totalSlots ?? 0 }}</div>
+                </div>
+
+                <!-- 4. Pending Booking -->
+                <div class="bg-white p-5 rounded-lg shadow-sm border border-orange-200">
+                    <div class="text-xs font-bold text-orange-600 uppercase">Booking Pending</div>
+                    <div class="text-2xl font-black text-gray-800 mt-2">{{ $pendingBookings ?? 0 }}</div>
+                    <a href="{{ route('admin.bookings') }}" class="text-xs text-orange-600 hover:underline mt-2 inline-block font-semibold">
+                        Kelola Booking →
+                    </a>
+                </div>
+
+                <!-- 5. Pending Payment -->
+                <div class="bg-white p-5 rounded-lg shadow-sm border border-green-200">
+                    <div class="text-xs font-bold text-green-600 uppercase">Pembayaran Pending</div>
+                    <div class="text-2xl font-black text-gray-800 mt-2">{{ $pendingPayments ?? 0 }}</div>
+                    <a href="{{ route('admin.payments') }}" class="text-xs text-green-600 hover:underline mt-2 inline-block font-semibold">
+                        Cek Pembayaran →
+                    </a>
+                </div>
+
             </div>
 
         </div>

@@ -9,9 +9,14 @@ class Payment extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
+    protected $fillable = [
+        'booking_id',
+        'jumlah_bayar',
+        'metode_pembayaran',
+        'bukti_pembayaran', // Boleh null / kosong
+        'status',
+    ];
 
-    // Relasi ke Model Booking
     public function booking()
     {
         return $this->belongsTo(Booking::class);

@@ -10,88 +10,116 @@ use App\Models\Payment;
 
 class AdminController extends Controller
 {
-    /**
-     * Display the Admin Dashboard
-     */
-    public function index()
+    public function dashboard()
     {
-        // Mengambil data ringkasan untuk statistik dashboard admin
         $totalUsers = User::where('role', 'user')->count();
+        $pendingUsers = User::where('role', 'user')
+            ->where(function($q) {
+                $q->where('status_pendaftaran', 'pending')
+                  ->orWhereNull('status_pendaftaran');
+            })->count();
+
         $totalSlots = ParkingSlot::count();
         $pendingBookings = Booking::where('status', 'pending')->count();
         $pendingPayments = Payment::where('status', 'pending')->count();
 
-        return view('admin.dashboard', compact('totalUsers', 'totalSlots', 'pendingBookings', 'pendingPayments'));
+        return view('admin.dashboard', compact(
+            'totalUsers',
+            'pendingUsers',
+            'totalSlots',
+            'pendingBookings',
+            'pendingPayments'
+        ));
     }
 
-    /**
-     * Halaman Verifikasi User
-     */
     public function users()
     {
-        $users = User::where('role', 'user')->get();
+        $users = User::where('role', 'user')->latest()->get();
         return view('admin.users', compact('users'));
     }
 
-    /**
-     * Halaman Verifikasi Booking
-     */
+    public function approveUser($id)
+    {
+        $user = User::findOrFail($id);
+        $user->status_pendaftaran = 'disetujui';
+        $user->save();
+
+        return redirect()->route('admin.users')->with('success', 'Pendaftaran user ' . $user->name . ' berhasil diterima!');
+    }
+
+    public function rejectUser($id)
+    {
+        $user = User::findOrFail($id);
+        $user->status_pendaftaran = 'ditolak';
+        $user->save();
+
+        return redirect()->route('admin.users')->with('success', 'Pendaftaran user ' . $user->name . ' telah ditolak.');
+    }
+
     public function bookings()
     {
         $bookings = Booking::with(['user', 'parkingSlot'])->latest()->get();
         return view('admin.bookings', compact('bookings'));
     }
 
-    /**
-     * Halaman Verifikasi Pembayaran
-     */
-    public function payments()
-    {
-        $payments = Payment::with(['booking.user', 'booking.parkingSlot'])->latest()->get();
-        return view('admin.payments', compact('payments'));
-    }
-
-    /**
-     * Approve Pendaftaran User
-     */
-    public function approveUser($id)
-    {
-        $user = User::findOrFail($id);
-        $user->update(['status_pendaftaran' => 'aktif']);
-
-        return redirect()->back()->with('success', 'User berhasil diverifikasi/disetujui.');
-    }
-
-    /**
-     * Approve Booking
-     */
     public function approveBooking($id)
     {
         $booking = Booking::findOrFail($id);
         $booking->update(['status' => 'disetujui']);
 
-        return redirect()->back()->with('success', 'Booking berhasil disetujui.');
+        if ($booking->parkingSlot) {
+            $slot = $booking->parkingSlot;
+            $slot->status = 'terisi';
+            $slot->save();
+        }
+
+        return redirect()->back()->with('success', 'Booking berhasil disetujui!');
     }
 
-    /**
-     * Reject Booking
-     */
     public function rejectBooking($id)
     {
         $booking = Booking::findOrFail($id);
         $booking->update(['status' => 'ditolak']);
 
-        return redirect()->back()->with('success', 'Booking berhasil ditolak.');
+        return redirect()->back()->with('success', 'Booking telah ditolak.');
+    }
+
+    // 🔹 TAMBAHKAN METHOD UNTUK VERIFIKASI PEMBAYARAN DI BAWAH INI 🔹
+
+    /**
+     * Menampilkan Halaman Verifikasi Pembayaran Admin
+     */
+    public function payments()
+    {
+        // Ambil data pembayaran beserta relasi booking, user, dan slot parkirnya
+        $payments = Payment::with(['booking.user', 'booking.parkingSlot'])->latest()->get();
+
+        // Catatan: Jika nama file blade kamu admin/payments_history.blade.php, sesuaikan jadi 'admin.payments_history'
+        return view('admin.payments', compact('payments'));
     }
 
     /**
-     * Approve Pembayaran
+     * Menyetujui Pembayaran User
      */
     public function approvePayment($id)
     {
         $payment = Payment::findOrFail($id);
-        $payment->update(['status' => 'valid']);
 
-        return redirect()->back()->with('success', 'Pembayaran berhasil dikonfirmasi valid.');
+        // Simpan status sebagai 'disetujui'
+        $payment->status = 'disetujui';
+        $payment->save();
+
+        return redirect()->back()->with('success', 'Pembayaran berhasil disetujui!');
+    }
+
+    public function rejectPayment($id)
+    {
+        $payment = Payment::findOrFail($id);
+
+        // Simpan status sebagai 'ditolak'
+        $payment->status = 'ditolak';
+        $payment->save();
+
+        return redirect()->back()->with('success', 'Pembayaran telah ditolak.');
     }
 }

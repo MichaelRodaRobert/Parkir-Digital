@@ -35,12 +35,11 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // Otomatis set role default ke 'pengguna' saat register
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'pengguna',
+            'role' => 'user',
             'status_pendaftaran' => 'pending',
         ]);
 
@@ -48,7 +47,8 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        // Redirect langsung ke URL /dashboard
-        return redirect('/dashboard');
+        $request->session()->regenerate();
+
+        return redirect()->route('user.dashboard');
     }
 }

@@ -9,21 +9,25 @@ class Booking extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
+    protected $fillable = [
+        'user_id',
+        'parking_slot_id',
+        'waktu_mulai',
+        'waktu_selesai',
+        'total_harga', // 👈 Dipastikan ada di fillable
+        'status',
+    ];
 
-    // Relasi ke Model User (Setiap Booking milik 1 User)
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relasi ke Model ParkingSlot
     public function parkingSlot()
     {
-        return $this->belongsTo(ParkingSlot::class);
+        return $this->belongsTo(ParkingSlot::class, 'parking_slot_id');
     }
 
-    // Relasi ke Model Payment
     public function payment()
     {
         return $this->hasOne(Payment::class);
