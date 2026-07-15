@@ -119,9 +119,10 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="url('#')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
+                <!-- Menggunakan path URL langsung, dijamin bebas dari error Route Not Defined -->
+<x-dropdown-link href="/profile">
+    {{ __('Profile') }}
+</x-dropdown-link>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
