@@ -1,34 +1,116 @@
+<!-- SCRIPT CDN ALPINE.JS (Menghidupkan aksi tombol X pop-up) -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
 <x-app-layout>
+    <!-- SLOT HEADER - TEKS PUTIH ERGONOMIS -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard Parkir User') }}
+        <h2 class="font-bold text-xl text-white leading-tight tracking-wide flex items-center gap-2">
+            <span>🚗</span> {{ __('Dashboard Parkir User') }}
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <!-- CONTAINER UTAMA DENGAN BACKGROUND DARK KONSISTEN DENGAN ADMIN -->
+    <div x-data="{ showAnnouncement: true }" class="py-10 min-h-screen bg-slate-950 text-slate-100 relative">
+
+        <!-- 🔔 MODAL PENGUMUMAN POP-UP USER (WARNA THEME DARK ADMIN - BLUE & INDIGO ACCENT) -->
+        <div x-show="showAnnouncement"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             class="fixed inset-0 z-50 flex items-center justify-center p-4"
+             style="background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(10px); display: none;">
+
+            <!-- POPUP CARD SOLID (SESUAI BACKGROUND GELAP ADMIN DENGAN GLOW BLUE/INDIGO) -->
+            <div class="relative w-full max-w-xl rounded-3xl p-6 md:p-8 shadow-2xl text-center border border-indigo-500/30 overflow-hidden bg-slate-900 text-white">
+
+                <!-- BACKGROUND GLOW DEKORASI ALA ADMIN -->
+                <div class="absolute -top-20 -left-20 w-48 h-48 bg-indigo-600/20 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-20 -right-20 w-48 h-48 bg-blue-600/20 rounded-full blur-3xl"></div>
+
+                <!-- ❌ TOMBOL CLOSE POP-UP -->
+                <button @click="showAnnouncement = false"
+                        type="button"
+                        title="Tutup Pengumuman"
+                        class="absolute top-4 right-4 bg-red-500/20 hover:bg-red-600 text-red-400 hover:text-white font-black w-9 h-9 rounded-xl flex items-center justify-center border border-red-500/30 transition-all duration-200 z-30 cursor-pointer shadow-md">
+                    ✕
+                </button>
+
+                <!-- CONTENT PENGUMUMAN PENGGUNA PARKIR -->
+                <div class="relative z-10">
+
+                    <!-- IKON SHIELD GLOW -->
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-500/10 border border-indigo-400/30 rounded-2xl mb-4 text-indigo-400 text-3xl shadow-inner">
+                        🛡️
+                    </div>
+
+                    <!-- TEKS UTAMA WARNA PUTIH TEBAL & JELAS -->
+                    <h2 class="text-2xl md:text-3xl font-black tracking-wider text-white uppercase drop-shadow-md">
+                        PANDUAN PENGGUNA
+                    </h2>
+
+                    <p class="text-xs md:text-sm text-indigo-300 mt-1 font-semibold tracking-widest uppercase">
+                        Sistem Booking & Pelayanan Parkir Digital
+                    </p>
+
+                    <!-- ORNAMEN GARIS AKSEN BLUE -->
+                    <div class="flex items-center justify-center gap-2 my-5">
+                        <div class="h-[1px] w-16 bg-gradient-to-r from-transparent to-indigo-400"></div>
+                        <span class="text-indigo-400 text-xs">◆</span>
+                        <div class="h-[1px] w-16 bg-gradient-to-l from-transparent to-indigo-400"></div>
+                    </div>
+
+                    <!-- TEKS KETERTIBAN USER -->
+                    <p class="text-slate-400 text-xs md:text-sm font-medium">
+                        SELAMAT DATANG DI APLIKASI PARKIR ONLINE
+                    </p>
+                    <h3 class="text-xl md:text-2xl font-black text-blue-400 tracking-tight my-2 drop-shadow-[0_2px_10px_rgba(96,165,250,0.3)]">
+                        UTAMAKAN KETERTIBAN & KEAMANAN
+                    </h3>
+                    <p class="text-xs md:text-sm text-slate-300 max-w-md mx-auto font-light leading-relaxed">
+                        Demi kenyamanan bersama, mohon pastikan <strong class="text-blue-300">Nomor Plat Kendaraan</strong> yang didaftarkan sudah sesuai, kunci kendaraan Anda dengan aman, dan tidak meninggalkan barang berharga.
+                    </p>
+
+                    <!-- BADGE BANNER FITUR USER THM ADMIN -->
+                    <div class="grid grid-cols-2 gap-3 mt-6 max-w-md mx-auto">
+                        <div class="flex items-center justify-center gap-2 p-3 bg-slate-800/80 border border-indigo-500/30 rounded-2xl text-indigo-300 text-xs font-bold shadow-md">
+                            <span class="text-base">🎫</span> Tiket Digital Sah
+                        </div>
+                        <div class="flex items-center justify-center gap-2 p-3 bg-slate-800/80 border border-blue-500/30 rounded-2xl text-blue-300 text-xs font-bold shadow-md">
+                            <span class="text-base">💸</span> Bebas Pungli
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD BODY CONTAINER (SESUAI DARK BACKGROUND) -->
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             <!-- Alert Notifikasi Jika Akun Belum Diverifikasi -->
             @if(Auth::user()->status_pendaftaran !== 'disetujui')
-                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md shadow-sm">
+                <div class="bg-amber-950/40 border-l-4 border-amber-500 p-4 rounded-xl shadow-md border border-amber-500/20 backdrop-blur-sm">
                     <div class="flex items-center">
-                        <div class="flex-shrink-0">⏳</div>
+                        <div class="flex-shrink-0 text-lg">⏳</div>
                         <div class="ml-3">
-                            <p class="text-sm font-bold text-yellow-800">
+                            <p class="text-sm font-bold text-amber-300">
                                 Akun Anda Sedang Menunggu Verifikasi Admin!
                             </p>
-                            <p class="text-xs text-yellow-700 mt-1">
+                            <p class="text-xs text-amber-200/80 mt-1">
                                 Permintaan verifikasi pendaftaran akun Anda telah dikirimkan ke Admin. Seluruh fitur booking & pembayaran dikunci sampai akun Anda disetujui.
                             </p>
                         </div>
                     </div>
                 </div>
             @else
-                <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-md shadow-sm">
-                    <p class="text-sm font-bold text-green-800">
+                <div class="bg-emerald-950/40 border-l-4 border-emerald-500 p-4 rounded-xl shadow-md border border-emerald-500/20 backdrop-blur-sm">
+                    <p class="text-sm font-bold text-emerald-300">
                         ✓ Akun Anda Terverifikasi!
                     </p>
-                    <p class="text-xs text-green-700">
+                    <p class="text-xs text-emerald-200/80">
                         Anda dapat melakukan pemesanan slot parkir dan pembayaran.
                     </p>
                 </div>
@@ -36,26 +118,26 @@
 
             <!-- Notifikasi Session Flash -->
             @if(session('success'))
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded">
+                <div class="bg-emerald-950/40 border-l-4 border-emerald-500 text-emerald-300 p-4 rounded-xl shadow-sm border border-emerald-500/20">
                     {{ session('success') }}
                 </div>
             @endif
             @if(session('error'))
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
+                <div class="bg-red-950/40 border-l-4 border-red-500 text-red-300 p-4 rounded-xl shadow-sm border border-red-500/20">
                     {{ session('error') }}
                 </div>
             @endif
 
-            <!-- Form Pemesanan Parkir -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+            <!-- Form Pemesanan Parkir (Sesuai Dark Background Dashboard Admin) -->
+            <div class="bg-slate-900 p-6 rounded-2xl shadow-xl border border-slate-800">
+                <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
                         <span>🚗</span> Form Booking Slot Parkir
                     </h3>
 
                     <!-- Status Pendaftaran Badge -->
                     @if(Auth::user()->status_pendaftaran !== 'disetujui')
-                        <span class="text-xs font-semibold px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-full">
+                        <span class="text-xs font-semibold px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full">
                             ⚠️ Akun Menunggu ACC Admin
                         </span>
                     @endif
@@ -63,7 +145,7 @@
 
                 <!-- Alert jika akun belum disetujui admin -->
                 @if(Auth::user()->status_pendaftaran !== 'disetujui')
-                    <div class="mb-4 p-3 bg-amber-50 border-l-4 border-amber-500 text-amber-800 rounded-r-lg text-xs font-medium">
+                    <div class="mb-4 p-3 bg-amber-500/10 border-l-4 border-amber-500 text-amber-300 rounded-r-lg text-xs font-medium">
                         Form pemesanan terkunci karena akun Anda belum diverifikasi/disetujui oleh Admin.
                     </div>
                 @endif
@@ -74,15 +156,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
                         <!-- PILIH SLOT -->
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                                 Pilih Slot Parkir
                             </label>
                             <select name="parking_slot_id"
-                                    class="w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                    class="w-full bg-slate-950 border-slate-700 text-white rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed"
                                     {{ Auth::user()->status_pendaftaran !== 'disetujui' ? 'disabled' : '' }} required>
-                                <option value="">-- Pilih Slot Available --</option>
+                                <option value="" class="bg-slate-900 text-white">-- Pilih Slot Available --</option>
                                 @foreach($availableSlots ?? [] as $slot)
-                                    <option value="{{ $slot->id }}">
+                                    <option value="{{ $slot->id }}" class="bg-slate-900 text-white">
                                         Slot {{ $slot->nomor_slot ?? $slot->nama_slot }} (Lantai {{ $slot->lantai ?? '1' }})
                                     </option>
                                 @endforeach
@@ -91,25 +173,25 @@
 
                         <!-- WAKTU MULAI -->
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                                 Waktu Mulai
                             </label>
                             <input type="datetime-local"
                                    id="waktu_mulai"
                                    name="waktu_mulai"
-                                   class="w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                   class="w-full bg-slate-950 border-slate-700 text-white rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed"
                                    {{ Auth::user()->status_pendaftaran !== 'disetujui' ? 'disabled' : '' }} required>
                         </div>
 
                         <!-- WAKTU SELESAI -->
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
                                 Waktu Selesai
                             </label>
                             <input type="datetime-local"
                                    id="waktu_selesai"
                                    name="waktu_selesai"
-                                   class="w-full border-gray-300 rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                   class="w-full bg-slate-950 border-slate-700 text-white rounded-xl shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed"
                                    {{ Auth::user()->status_pendaftaran !== 'disetujui' ? 'disabled' : '' }} required>
                         </div>
                     </div>
@@ -117,7 +199,7 @@
                     <!-- TOMBOL SUBMIT -->
                     <div class="flex justify-end">
                         <button type="submit"
-                                class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-indigo-500/20 transition-all active:scale-95 disabled:bg-gray-300 disabled:text-gray-500 disabled:shadow-none disabled:cursor-not-allowed disabled:active:scale-100 flex items-center gap-2"
+                                class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-600/30 transition-all active:scale-95 disabled:bg-slate-800 disabled:text-slate-600 disabled:shadow-none disabled:cursor-not-allowed flex items-center gap-2"
                                 {{ Auth::user()->status_pendaftaran !== 'disetujui' ? 'disabled' : '' }}>
                             <span>Pesan Slot Parkir</span>
                             <span class="text-base">➔</span>
@@ -139,38 +221,38 @@
 
             <!-- CARD KONFIRMASI PEMBAYARAN SIMPEL -->
             @if(isset($activeBookingToPay) && $activeBookingToPay)
-                <div class="bg-yellow-50 border-2 border-yellow-400 p-6 rounded-lg shadow-sm">
+                <div class="bg-slate-900 border-2 border-amber-500/50 p-6 rounded-2xl shadow-xl">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-yellow-900 flex items-center gap-2">
+                        <h3 class="text-lg font-bold text-amber-400 flex items-center gap-2">
                             <span>🎉</span> Booking Anda Telah Disetujui! Silakan Lakukan Pembayaran
                         </h3>
-                        <span class="px-3 py-1 bg-yellow-200 text-yellow-800 text-xs font-bold rounded-full">
+                        <span class="px-3 py-1 bg-amber-500/20 text-amber-300 text-xs font-bold rounded-full border border-amber-500/30">
                             Menunggu Pembayaran
                         </span>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700 mb-6 bg-white p-4 rounded-md border border-yellow-200">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-300 mb-6 bg-slate-950 p-4 rounded-xl border border-slate-800">
                         <div>
-                            <p><strong class="text-gray-900">Slot Parkir:</strong> Slot {{ $activeBookingToPay->parkingSlot->nomor_slot ?? $activeBookingToPay->parkingSlot->nama_slot ?? '-' }}</p>
-                            <p><strong class="text-gray-900">Waktu Mulai:</strong> {{ $activeBookingToPay->waktu_mulai }}</p>
+                            <p><strong class="text-white">Slot Parkir:</strong> Slot {{ $activeBookingToPay->parkingSlot->nomor_slot ?? $activeBookingToPay->parkingSlot->nama_slot ?? '-' }}</p>
+                            <p><strong class="text-white">Waktu Mulai:</strong> {{ $activeBookingToPay->waktu_mulai }}</p>
                         </div>
                         <div>
-                            <p><strong class="text-gray-900">Waktu Selesai:</strong> {{ $activeBookingToPay->waktu_selesai }}</p>
-                            <p><strong class="text-gray-900">Total Tagihan:</strong> <span class="text-green-600 font-bold text-base">Rp {{ number_format($activeBookingToPay->total_harga ?? 20000, 0, ',', '.') }}</span></p>
+                            <p><strong class="text-white">Waktu Selesai:</strong> {{ $activeBookingToPay->waktu_selesai }}</p>
+                            <p><strong class="text-white">Total Tagihan:</strong> <span class="text-emerald-400 font-bold text-base">Rp {{ number_format($activeBookingToPay->total_harga ?? 20000, 0, ',', '.') }}</span></p>
                         </div>
                     </div>
 
                     <!-- Form Konfirmasi Bayar -->
-                    <form action="{{ route('user.payment.store', $activeBookingToPay->id) }}" method="POST" class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-md border border-gray-200">
+                    <form action="{{ route('user.payment.store', $activeBookingToPay->id) }}" method="POST" class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-950 p-4 rounded-xl border border-slate-800">
                         @csrf
                         <div>
-                            <p class="text-xs text-gray-500 font-semibold uppercase">Metode Pembayaran</p>
-                            <p class="text-sm font-bold text-gray-800">Bayar di Tempat (Tunai / Cash) / Instant</p>
+                            <p class="text-xs text-slate-400 font-semibold uppercase">Metode Pembayaran</p>
+                            <p class="text-sm font-bold text-white">Bayar di Tempat (Tunai / Cash) / Instant</p>
                         </div>
 
                         <button type="submit"
                                 onclick="return confirm('Apakah Anda yakin ingin mengonfirmasi pembayaran ini?')"
-                                class="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold text-sm rounded-md shadow transition flex items-center gap-2">
+                                class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center gap-2">
                             <span>✅</span> Konfirmasi Pembayaran
                         </button>
                     </form>
@@ -179,38 +261,38 @@
 
             <!-- 🎟️ TIKET & STRUK PARKIR (MEMUAT PENDING & DISETUJUI) -->
             @if(isset($myBookings) && $myBookings->count() > 0)
-                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4">🎟️ Tiket & Struk Parkir Anda</h3>
+                <div class="bg-slate-900 p-6 rounded-2xl shadow-xl border border-slate-800">
+                    <h3 class="text-lg font-bold text-white mb-4">🎟️ Tiket & Struk Parkir Anda</h3>
 
                     <div class="space-y-3">
                         @foreach($myBookings as $b)
-                            <div class="p-4 rounded-lg border border-gray-200 bg-gray-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div class="p-4 rounded-xl border border-slate-800 bg-slate-950 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                 <div>
                                     <div class="flex items-center gap-2 mb-1">
                                         <!-- DYNAMIC KETERANGAN STATUS -->
                                         @if($b->status === 'disetujui')
-                                            <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-green-100 text-green-800">
+                                            <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                                                 ✓ Booking Disetujui
                                             </span>
                                         @elseif($b->status === 'pending')
-                                            <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-yellow-100 text-yellow-800">
+                                            <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
                                                 ⏳ Pending (Menunggu ACC Admin)
                                             </span>
                                         @else
-                                            <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-red-100 text-red-800">
+                                            <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-red-500/20 text-red-400 border border-red-500/30">
                                                 ✕ Ditolak
                                             </span>
                                         @endif
 
-                                        <span class="text-xs text-gray-500 font-mono">Kode Tiket: #PRK-{{ str_pad($b->id, 5, '0', STR_PAD_LEFT) }}</span>
+                                        <span class="text-xs text-slate-400 font-mono">Kode Tiket: #PRK-{{ str_pad($b->id, 5, '0', STR_PAD_LEFT) }}</span>
                                     </div>
-                                    <p class="text-sm font-bold text-gray-800">
+                                    <p class="text-sm font-bold text-white">
                                         Slot {{ $b->parkingSlot->nomor_slot ?? $b->parkingSlot->nama_slot ?? '-' }}
                                     </p>
-                                    <p class="text-xs text-gray-600">
+                                    <p class="text-xs text-slate-400">
                                         🕒 {{ $b->waktu_mulai }} s/d {{ $b->waktu_selesai }}
                                     </p>
-                                    <p class="text-xs font-bold text-green-700 mt-0.5">
+                                    <p class="text-xs font-bold text-emerald-400 mt-0.5">
                                         Total Biaya: Rp {{ number_format($b->total_harga ?? 20000, 0, ',', '.') }}
                                     </p>
                                 </div>
@@ -219,7 +301,7 @@
                                 <div>
                                     <a href="{{ route('user.booking.receipt', $b->id) }}"
                                        target="_blank"
-                                       class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-black font-bold text-xs rounded-md shadow transition">
+                                       class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow transition">
                                         <span>🖨️</span> Lihat Struk
                                     </a>
                                 </div>
@@ -232,7 +314,7 @@
             <!-- Link Riwayat Pembayaran -->
             <div class="flex justify-end">
                 <a href="{{ route('user.payments.history') }}"
-                   class="inline-flex items-center px-4 py-2 bg-gray-800 text-white rounded-md text-xs font-semibold uppercase tracking-widest hover:bg-gray-700 transition {{ Auth::user()->status_pendaftaran !== 'disetujui' ? 'pointer-events-none opacity-50' : '' }}">
+                   class="inline-flex items-center px-5 py-2.5 bg-slate-800 text-slate-200 border border-slate-700 rounded-xl text-xs font-semibold uppercase tracking-widest hover:bg-slate-700 hover:text-white transition {{ Auth::user()->status_pendaftaran !== 'disetujui' ? 'pointer-events-none opacity-50' : '' }}">
                     📜 Lihat Riwayat Pembayaran
                 </a>
             </div>

@@ -5,51 +5,128 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Login - Parkir Digital</title>
+    <title>Login - Parkir Online</title>
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800,900&display=swap" rel="stylesheet" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Scripts & Vite -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            /* Background persis sama seperti Welcome Screen */
+            background:
+                linear-gradient(rgba(10, 25, 47, 0.82), rgba(10, 25, 47, 0.90)),
+                url('https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .highlight {
+            color: #4fd1ff;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff !important;
+            border-radius: 12px;
+            padding: 12px 16px;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15) !important;
+            border-color: #4fd1ff;
+            box-shadow: 0 0 10px rgba(79, 209, 255, 0.3);
+        }
+
+        .btn-custom {
+            border-radius: 50px;
+            padding: 12px;
+            font-weight: 600;
+            background-color: #0dcaf0;
+            border: none;
+            color: #0a192f;
+            transition: 0.3s;
+        }
+
+        .btn-custom:hover {
+            background-color: #31d2f2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(13, 202, 240, 0.4);
+        }
+
+        .form-check-input {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-check-input:checked {
+            background-color: #0dcaf0;
+            border-color: #0dcaf0;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
 </head>
-<body class="font-sans antialiased bg-slate-950 text-slate-100 selection:bg-pink-500 selection:text-white">
+<body>
 
-    <div class="min-h-screen flex flex-col justify-center items-center relative overflow-hidden px-4 sm:px-6">
+    <div class="container d-flex justify-content-center px-3">
+        <div class="login-card">
 
-        <!-- Background Glowing Colorful Orbs FX -->
-        <div class="absolute -top-10 -left-10 w-96 h-96 bg-indigo-600/40 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
-        <div class="absolute bottom-0 right-0 w-96 h-96 bg-purple-600/40 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30rem] h-[30rem] bg-pink-500/20 rounded-full blur-[100px] pointer-events-none"></div>
-
-        <!-- Card Container Berwarna & Modern -->
-        <div class="w-full sm:max-w-md relative z-10 bg-slate-900/90 backdrop-blur-2xl border-2 border-indigo-500/30 p-8 rounded-3xl shadow-[0_0_50px_rgba(99,102,241,0.25)] hover:border-pink-500/50 transition-all duration-500">
-
-            <!-- HEADER & BRANDING PARKIR DIGITAL (TANPA LOGO P) -->
-            <div class="text-center mb-8 pt-2">
-                <h1 class="text-3xl font-black tracking-wider uppercase flex items-center justify-center gap-2">
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-300 to-cyan-400">PARKIR</span>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">DIGITAL</span>
-                </h1>
-                <p class="text-xs font-semibold text-indigo-200/80 mt-1">Smart Access Control & Automated Reservation</p>
+            <!-- HEADER LOGO & TITLE -->
+            <div class="text-center mb-4">
+                <a href="/" class="text-white text-decoration-none d-inline-block mb-2">
+                    <i class="bi bi-p-square-fill text-info fs-1"></i>
+                </a>
+                <h2 class="fw-bold m-0 fs-3">
+                    PARKIR <span class="highlight">ONLINE</span>
+                </h2>
+                <p class="small text-light text-opacity-75 mt-1">Silakan masuk ke akun Anda</p>
             </div>
 
-            <!-- Session Status Notification -->
+            <!-- SESSION STATUS NOTIFICATION -->
             @if (session('status'))
-                <div class="mb-4 text-emerald-300 text-xs font-semibold bg-emerald-950/60 border border-emerald-500/50 p-3 rounded-xl shadow-lg shadow-emerald-500/10">
+                <div class="alert alert-info py-2 px-3 small rounded-3 bg-info bg-opacity-20 text-info border-info border-opacity-25 mb-3">
                     {{ session('status') }}
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('login') }}" class="space-y-5">
+            <form method="POST" action="{{ route('login') }}">
                 @csrf
 
                 <!-- EMAIL INPUT -->
-                <div>
-                    <label for="email" class="block text-xs font-bold text-pink-300 uppercase tracking-wider mb-1.5">
-                        Email Address
-                    </label>
+                <div class="mb-3">
+                    <label for="email" class="form-label small font-weight-bold text-light opacity-90">Email Address</label>
                     <input id="email"
                            type="email"
                            name="email"
@@ -58,67 +135,59 @@
                            autofocus
                            autocomplete="username"
                            placeholder="nama@email.com"
-                           class="w-full px-4 py-3 bg-slate-950/80 border-2 border-indigo-900/60 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 text-sm transition-all shadow-inner">
+                           class="form-control">
                     @if ($errors->has('email'))
-                        <p class="mt-1.5 text-xs text-rose-400 font-medium">{{ $errors->first('email') }}</p>
+                        <div class="text-danger small mt-1">{{ $errors->first('email') }}</div>
                     @endif
                 </div>
 
                 <!-- PASSWORD INPUT -->
-                <div>
-                    <label for="password" class="block text-xs font-bold text-cyan-300 uppercase tracking-wider mb-1.5">
-                        Password
-                    </label>
+                <div class="mb-3">
+                    <label for="password" class="form-label small font-weight-bold text-light opacity-90">Password</label>
                     <input id="password"
                            type="password"
                            name="password"
                            required
                            autocomplete="current-password"
                            placeholder="••••••••"
-                           class="w-full px-4 py-3 bg-slate-950/80 border-2 border-indigo-900/60 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-sm transition-all shadow-inner">
+                           class="form-control">
                     @if ($errors->has('password'))
-                        <p class="mt-1.5 text-xs text-rose-400 font-medium">{{ $errors->first('password') }}</p>
+                        <div class="text-danger small mt-1">{{ $errors->first('password') }}</div>
                     @endif
                 </div>
 
                 <!-- REMEMBER ME & FORGOT PASSWORD -->
-                <div class="flex items-center justify-between text-xs pt-1">
-                    <label for="remember_me" class="inline-flex items-center cursor-pointer">
-                        <input id="remember_me"
-                               type="checkbox"
-                               name="remember"
-                               class="rounded bg-slate-950 border-indigo-700 text-pink-500 shadow-sm focus:ring-pink-500 focus:ring-offset-slate-900">
-                        <span class="ms-2 text-slate-300 hover:text-white transition-colors">Remember Me?</span>
-                    </label>
+                <div class="d-flex justify-content-between align-items-center mb-4 small">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="remember" id="remember_me">
+                        <label class="form-check-label text-light opacity-75" for="remember_me">
+                            Ingat saya
+                        </label>
+                    </div>
 
                     @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}" class="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors">
-                            Forgot Password?
+                        <a href="{{ route('password.request') }}" class="text-info text-opacity-80 hover-underline">
+                            Lupa Password?
                         </a>
                     @endif
                 </div>
 
-                <!-- BUTTON LOG IN -->
-                <div class="pt-2">
-                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 hover:from-pink-400 hover:via-purple-500 hover:to-indigo-500 text-black font-black text-sm tracking-wider uppercase rounded-xl shadow-lg shadow-pink-500/25 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                        <span>LOG IN</span>
-                        <span class="text-base">➔</span>
-                    </button>
-                </div>
+                <!-- SUBMIT BUTTON -->
+                <button type="submit" class="btn btn-custom w-full w-100 shadow">
+                    Masuk Sekarang <i class="bi bi-arrow-right ms-1"></i>
+                </button>
+
             </form>
 
             <!-- REGISTER LINK -->
             @if (Route::has('register'))
-                <div class="mt-6 pt-5 border-t border-slate-800 text-center text-xs text-slate-400">
+                <div class="text-center mt-4 pt-3 border-top border-white border-opacity-10 small text-light opacity-75">
                     Belum punya akun?
-                    <a href="{{ route('register') }}" class="text-pink-400 hover:text-pink-300 font-bold ml-1 transition-colors">
-                        Daftar Akun Baru
-                    </a>
+                    <a href="{{ route('register') }}" class="text-info fw-bold ms-1">Daftar Akun Baru</a>
                 </div>
             @endif
 
         </div>
-
     </div>
 
 </body>

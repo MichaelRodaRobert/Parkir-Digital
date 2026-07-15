@@ -1,6 +1,86 @@
+<!-- SCRIPT CDN ALPINE.JS (Memastikan tombol X & modal berfungsi interaktif) -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
 <x-app-layout>
 
-    <div class="py-10 bg-slate-50/50 min-h-screen">
+    <!-- CONTAINER UTAMA DENGAN ALPINE.JS STATE UNTUK MODAL -->
+    <div x-data="{ showAnnouncement: true }" class="py-10 bg-slate-50/50 min-h-screen relative">
+
+        <!-- 🔔 MODAL PENGUMUMAN POP-UP (AKAN HILANG SAAT TOMBOL X DIKLIK) -->
+        <div x-show="showAnnouncement"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             class="fixed inset-0 z-50 flex items-center justify-center p-4"
+             style="background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); display: none;">
+
+            <!-- POPUP CARD SOLID (DARK SLATE BLUE) -->
+            <div class="relative w-full max-w-xl rounded-3xl p-6 md:p-8 shadow-2xl text-center border border-sky-500/30 overflow-hidden"
+                 style="background-color: #0a192f; color: #ffffff;">
+
+                <!-- BACKGROUND GLOW DEKORASI -->
+                <div class="absolute -top-20 -left-20 w-40 h-40 bg-sky-500/20 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl"></div>
+
+                <!-- ❌ TOMBOL CLOSE (SATU-SATUNYA TOMBOL UNTUK KELUAR PENGUMUMAN) -->
+                <button @click="showAnnouncement = false"
+                        type="button"
+                        title="Tutup Pengumuman"
+                        class="absolute top-4 right-4 bg-red-500/20 hover:bg-red-600 text-red-400 hover:text-white font-black w-9 h-9 rounded-xl flex items-center justify-center border border-red-500/30 transition-all duration-200 z-30 cursor-pointer shadow-md">
+                    ✕
+                </button>
+
+                <!-- CONTENT PENGUMUMAN PARKIR ONLINE -->
+                <div class="relative z-10">
+
+                    <!-- LOGO / IKON PARKIR -->
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-sky-500/10 border border-sky-400/30 rounded-2xl mb-4 text-sky-400 text-3xl shadow-inner">
+                        🅿️
+                    </div>
+
+                    <h2 class="text-2xl md:text-3xl font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-cyan-300 to-sky-400">
+                        PENGUMUMAN SISTEM
+                    </h2>
+                    <p class="text-xs md:text-sm text-slate-300 mt-1 font-medium tracking-wider uppercase">
+                        Sistem Manajemen Parkir Online Smart & Integrated
+                    </p>
+
+                    <!-- ORNAMEN GARIS BIRU -->
+                    <div class="flex items-center justify-center gap-2 my-5">
+                        <div class="h-[1px] w-16 bg-gradient-to-r from-transparent to-sky-400"></div>
+                        <span class="text-sky-400 text-xs">◆</span>
+                        <div class="h-[1px] w-16 bg-gradient-to-l from-transparent to-sky-400"></div>
+                    </div>
+
+                    <!-- TEKS UTAMA KAWASAN PARKIR TERTIB -->
+                    <p class="text-slate-300 text-xs md:text-sm font-medium">
+                        SELAMAT DATANG DI CONTROL CENTER
+                    </p>
+                    <h3 class="text-xl md:text-2xl font-black text-sky-300 tracking-tight my-2 drop-shadow-[0_2px_10px_rgba(56,189,248,0.3)]">
+                        KAWASAN PARKIR AMAN & TERTIB
+                    </h3>
+                    <p class="text-xs md:text-sm text-slate-300 max-w-md mx-auto font-light leading-relaxed">
+                        Mohon selalu lakukan verifikasi data pemesanan slot parkir, konfirmasi kendaraan masuk/keluar, dan validasi transaksi pembayaran secara berkala.
+                    </p>
+
+                    <!-- BADGE BANNER KETERTIBAN PARKIR -->
+                    <div class="grid grid-cols-2 gap-3 mt-6 max-w-md mx-auto">
+                        <div class="flex items-center justify-center gap-2 p-3 bg-sky-900/40 border border-sky-500/30 rounded-2xl text-sky-200 text-xs font-bold">
+                            <span class="text-base">🚗</span> E-Parking System
+                        </div>
+                        <div class="flex items-center justify-center gap-2 p-3 bg-cyan-900/40 border border-cyan-500/30 rounded-2xl text-cyan-200 text-xs font-bold">
+                            <span class="text-base">🔒</span> Keamanan 24 Jam
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
 
             <!-- NOTIFIKASI FLASH -->
@@ -15,7 +95,7 @@
                 </div>
             @endif
 
-            <!-- 📊 GRID STATISTIK FUTURISTIK -->
+            <!-- 📊 GRID STATISTIK FUTURISTIK (5 KOLOM PRESI) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
 
                 <!-- CARD 1: USER PENDING ACC -->
@@ -60,27 +140,24 @@
                     </div>
                 </div>
 
-                <!-- CARD 3: SISA SLOT TERSEDIA -->
+                <!-- CARD 3: TOTAL SLOT -->
                 <div class="group relative bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                     <div class="absolute -right-4 -top-4 w-20 h-20 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition-all"></div>
                     <div class="flex items-center justify-between relative z-10">
-                        <p class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Slot Available</p>
+                        <p class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Total Slot</p>
                         <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl font-bold text-sm shadow-inner">
-                            🚗
+                            🅿️
                         </div>
                     </div>
                     <div class="mt-4 relative z-10 flex items-baseline gap-2">
                         <h3 class="text-3xl font-black text-slate-800 tracking-tight">
-                            {{ $totalSlot ?? 0 }}
+                            {{ $totalSemuaSlot ?? 0 }}
                         </h3>
-                        <span class="text-xs font-semibold text-slate-400">/ {{ $totalSemuaSlot ?? 0 }} Total</span>
+                        <span class="text-xs font-semibold text-slate-400">Total Slot</span>
                     </div>
                     <div class="mt-4 pt-3 border-t border-slate-100 relative z-10">
                         <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                            @php
-                                $percent = ($totalSemuaSlot ?? 0) > 0 ? (($totalSlot ?? 0) / $totalSemuaSlot) * 100 : 0;
-                            @endphp
-                            <div class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: {{ $percent }}%"></div>
+                            <div class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
                         </div>
                     </div>
                 </div>
