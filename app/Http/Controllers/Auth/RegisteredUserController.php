@@ -40,7 +40,7 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'user',
-            'status_pendaftaran' => 'pending',
+            'status_pendaftaran' => 'pending', // 👈 Pastikan nilai baris ini diset 'pending'
         ]);
 
         event(new Registered($user));

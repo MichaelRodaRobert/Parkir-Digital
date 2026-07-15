@@ -10,14 +10,15 @@ use App\Models\Payment;
 use Carbon\Carbon;
 
 
+
 class AdminController extends Controller
 {
     public function dashboard()
 {
+    // 1. Hitung total slot & slot terpakai saat ini
     $totalSemuaSlot = ParkingSlot::count();
     $sekarang = Carbon::now();
 
-    // Hitung slot yang SEDANG TERISI/TERPAKAI PADA JAM SEKARANG
     $slotTerpakaiSaatIni = Booking::whereIn('status', ['pending', 'disetujui'])
         ->where('waktu_mulai', '<=', $sekarang)
         ->where('waktu_selesai', '>=', $sekarang)
@@ -25,10 +26,17 @@ class AdminController extends Controller
         ->unique()
         ->count();
 
-    // Sisa slot tersedia saat ini di lokasi
     $totalSlot = max(0, $totalSemuaSlot - $slotTerpakaiSaatIni);
 
+    // 2. Hitung statistik User
     $totalUsers = User::where('role', 'user')->count();
+
+    // 🔍 FIX: Hanya cek kolom status_pendaftaran
+    $pendingUsers = User::where('role', 'user')
+        ->where('status_pendaftaran', 'pending')
+        ->count();
+
+    // 3. Statistik Booking & Pembayaran
     $pendingBookings = Booking::where('status', 'pending')->count();
     $totalPayments = Booking::where('status', 'disetujui')->sum('total_harga') ?? 0;
 
@@ -37,10 +45,11 @@ class AdminController extends Controller
         'totalSemuaSlot',
         'slotTerpakaiSaatIni',
         'totalUsers',
+        'pendingUsers',
         'pendingBookings',
         'totalPayments'
     ));
-    }
+}
 
     public function users()
     {

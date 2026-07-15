@@ -95,7 +95,7 @@
                                                         @method('PATCH')
                                                         <button type="submit"
                                                                 onclick="return confirm('Setujui pembayaran dari {{ $payment->booking->user->name ?? 'User' }}?')"
-                                                                class="px-3 py-1.5 font-bold text-xs bg-green-600 hover:bg-green-700 text-white rounded-md shadow transition">
+                                                                class="px-3 py-1.5 font-bold text-xs bg-green-600 hover:bg-green-700 text-black rounded-md shadow transition">
                                                             ✓ Terima
                                                         </button>
                                                     </form>
