@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\ParkingSlot;
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Models\Announcement; // 📢 1. MENAMBAHKAN IMPORT MODEL PENGUMUMAN
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
@@ -30,59 +31,63 @@ class UserController extends Controller
             ->whereDoesntHave('payment')
             ->first();
 
-        return view('user.dashboard', compact('availableSlots', 'myBookings', 'activeBookingToPay'));
+        // 📢 2. MENGAMBIL DATA PENGUMUMAN YANG AKTIF
+        $activeAnnouncement = Announcement::where('is_active', true)->latest()->first();
+
+        // 📢 3. MENGIRIM VARIABEL $activeAnnouncement KE VIEW DASHBOARD USER
+        return view('user.dashboard', compact('availableSlots', 'myBookings', 'activeBookingToPay', 'activeAnnouncement'));
     }
 
     /**
      * Menyimpan Booking Baru dengan Perhitungan Tarif Otomatis
      */
     public function storeBooking(Request $request)
-{
-    $request->validate([
-        'parking_slot_id' => 'required|exists:parking_slots,id',
-        'waktu_mulai'      => 'required|date|after_or_equal:now',
-        'waktu_selesai'    => 'required|date|after:waktu_mulai',
-    ]);
+    {
+        $request->validate([
+            'parking_slot_id' => 'required|exists:parking_slots,id',
+            'waktu_mulai'      => 'required|date|after_or_equal:now',
+            'waktu_selesai'    => 'required|date|after:waktu_mulai',
+        ]);
 
-    $slotId = $request->parking_slot_id;
-    $waktuMulai = $request->waktu_mulai;
-    $waktuSelesai = $request->waktu_selesai;
+        $slotId = $request->parking_slot_id;
+        $waktuMulai = $request->waktu_mulai;
+        $waktuSelesai = $request->waktu_selesai;
 
-    // 🔍 PENGECEKAN BENTROK WAKTU (OVERLAP CHECK)
-    // Cek apakah slot ini sudah dibooking oleh orang lain pada rentang waktu yang sama
-    $isBentrok = Booking::where('parking_slot_id', $slotId)
-        ->whereIn('status', ['pending', 'disetujui'])
-        ->where(function ($query) use ($waktuMulai, $waktuSelesai) {
-            $query->whereBetween('waktu_mulai', [$waktuMulai, $waktuSelesai])
-                  ->orWhereBetween('waktu_selesai', [$waktuMulai, $waktuSelesai])
-                  ->orWhere(function ($q) use ($waktuMulai, $waktuSelesai) {
-                      $q->where('waktu_mulai', '<=', $waktuMulai)
-                        ->where('waktu_selesai', '>=', $waktuSelesai);
-                  });
-        })
-        ->exists();
+        // 🔍 PENGECEKAN BENTROK WAKTU (OVERLAP CHECK)
+        // Cek apakah slot ini sudah dibooking oleh orang lain pada rentang waktu yang sama
+        $isBentrok = Booking::where('parking_slot_id', $slotId)
+            ->whereIn('status', ['pending', 'disetujui'])
+            ->where(function ($query) use ($waktuMulai, $waktuSelesai) {
+                $query->whereBetween('waktu_mulai', [$waktuMulai, $waktuSelesai])
+                      ->orWhereBetween('waktu_selesai', [$waktuMulai, $waktuSelesai])
+                      ->orWhere(function ($q) use ($waktuMulai, $waktuSelesai) {
+                          $q->where('waktu_mulai', '<=', $waktuMulai)
+                            ->where('waktu_selesai', '>=', $waktuSelesai);
+                      });
+            })
+            ->exists();
 
-    if ($isBentrok) {
-        return redirect()->back()->with('error', '❌ Slot parkir ini sudah dipesan oleh pengguna lain pada rentang jam/tanggal tersebut! Silakan pilih jam atau slot lain.');
+        if ($isBentrok) {
+            return redirect()->back()->with('error', '❌ Slot parkir ini sudah dipesan oleh pengguna lain pada rentang jam/tanggal tersebut! Silakan pilih jam atau slot lain.');
+        }
+
+        // Hitung estimasi total harga (misal Rp 5.000 / jam)
+        $mulai = new \DateTime($waktuMulai);
+        $selesai = new \DateTime($waktuSelesai);
+        $durasiJam = max(1, ceil(($selesai->getTimestamp() - $mulai->getTimestamp()) / 3600));
+        $totalHarga = $durasiJam * 5000;
+
+        Booking::create([
+            'user_id'         => Auth::id(),
+            'parking_slot_id' => $slotId,
+            'waktu_mulai'     => $waktuMulai,
+            'waktu_selesai'   => $waktuSelesai,
+            'total_harga'     => $totalHarga,
+            'status'          => 'pending',
+        ]);
+
+        return redirect()->back()->with('success', '✅ Booking berhasil diajukan! Menunggu verifikasi dari Admin.');
     }
-
-    // Hitung estimasi total harga (misal Rp 5.000 / jam)
-    $mulai = new \DateTime($waktuMulai);
-    $selesai = new \DateTime($waktuSelesai);
-    $durasiJam = max(1, ceil(($selesai->getTimestamp() - $mulai->getTimestamp()) / 3600));
-    $totalHarga = $durasiJam * 5000;
-
-    Booking::create([
-        'user_id'         => Auth::id(),
-        'parking_slot_id' => $slotId,
-        'waktu_mulai'     => $waktuMulai,
-        'waktu_selesai'   => $waktuSelesai,
-        'total_harga'     => $totalHarga,
-        'status'          => 'pending',
-    ]);
-
-    return redirect()->back()->with('success', '✅ Booking berhasil diajukan! Menunggu verifikasi dari Admin.');
-}
 
     /**
      * Konfirmasi Pembayaran Simpel

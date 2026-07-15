@@ -194,8 +194,7 @@
 
                     <p class="mt-3 fs-5 text-light opacity-90">
                         Kelola kendaraan dengan lebih cepat, aman, dan efisien.
-                        Monitoring kendaraan secara real-time, reservasi online,
-                        dan laporan terintegrasi dalam satu platform modern.
+                        Monitoring kendaraan secara real-time, reservasi online.
                     </p>
 
                     <div class="mt-4">
@@ -255,18 +254,7 @@
                         </div>
                     </div>
 
-                    <!-- Card 3: Laporan -->
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="bi bi-bar-chart-line-fill"></i>
-                        </div>
-                        <div>
-                            <h5 class="mb-1 fw-bold">Laporan Terintegrasi</h5>
-                            <p class="mb-0 text-light text-opacity-75 small">
-                                Rekapitulasi transaksi dan laporan riwayat parkir harian, bulanan, & tahunan.
-                            </p>
-                        </div>
-                    </div>
+
 
                 </div>
 

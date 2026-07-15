@@ -12,80 +12,90 @@
     <!-- CONTAINER UTAMA DENGAN BACKGROUND DARK KONSISTEN DENGAN ADMIN -->
     <div x-data="{ showAnnouncement: true }" class="py-10 min-h-screen bg-slate-950 text-slate-100 relative">
 
-        <!-- 🔔 MODAL PENGUMUMAN POP-UP USER (WARNA THEME DARK ADMIN - BLUE & INDIGO ACCENT) -->
-        <div x-show="showAnnouncement"
-             x-transition:enter="transition ease-out duration-300"
-             x-transition:enter-start="opacity-0 scale-95"
-             x-transition:enter-end="opacity-100 scale-100"
-             x-transition:leave="transition ease-in duration-200"
-             x-transition:leave-start="opacity-100 scale-100"
-             x-transition:leave-end="opacity-0 scale-95"
-             class="fixed inset-0 z-50 flex items-center justify-center p-4"
-             style="background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(10px); display: none;">
+        <!-- 🔔 MODAL PENGUMUMAN POP-UP USER (DINAMIS DARI ADMIN / DATABASE) -->
+        @if(isset($activeAnnouncement) && $activeAnnouncement)
+            <div x-show="showAnnouncement"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="opacity-0 scale-95"
+                 class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                 style="background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(10px); display: none;">
 
-            <!-- POPUP CARD SOLID (SESUAI BACKGROUND GELAP ADMIN DENGAN GLOW BLUE/INDIGO) -->
-            <div class="relative w-full max-w-xl rounded-3xl p-6 md:p-8 shadow-2xl text-center border border-indigo-500/30 overflow-hidden bg-slate-900 text-white">
+                <!-- POPUP CARD SOLID (SESUAI BACKGROUND GELAP ADMIN DENGAN GLOW BLUE/INDIGO) -->
+                <div class="relative w-full max-w-xl rounded-3xl p-6 md:p-8 shadow-2xl text-center border border-indigo-500/30 overflow-hidden bg-slate-900 text-white">
 
-                <!-- BACKGROUND GLOW DEKORASI ALA ADMIN -->
-                <div class="absolute -top-20 -left-20 w-48 h-48 bg-indigo-600/20 rounded-full blur-3xl"></div>
-                <div class="absolute -bottom-20 -right-20 w-48 h-48 bg-blue-600/20 rounded-full blur-3xl"></div>
+                    <!-- BACKGROUND GLOW DEKORASI ALA ADMIN -->
+                    <div class="absolute -top-20 -left-20 w-48 h-48 bg-indigo-600/20 rounded-full blur-3xl"></div>
+                    <div class="absolute -bottom-20 -right-20 w-48 h-48 bg-blue-600/20 rounded-full blur-3xl"></div>
 
-                <!-- ❌ TOMBOL CLOSE POP-UP -->
-                <button @click="showAnnouncement = false"
-                        type="button"
-                        title="Tutup Pengumuman"
-                        class="absolute top-4 right-4 bg-red-500/20 hover:bg-red-600 text-red-400 hover:text-white font-black w-9 h-9 rounded-xl flex items-center justify-center border border-red-500/30 transition-all duration-200 z-30 cursor-pointer shadow-md">
-                    ✕
-                </button>
+                    <!-- ❌ TOMBOL CLOSE POP-UP -->
+                    <button @click="showAnnouncement = false"
+                            type="button"
+                            title="Tutup Pengumuman"
+                            class="absolute top-4 right-4 bg-red-500/20 hover:bg-red-600 text-red-400 hover:text-white font-black w-9 h-9 rounded-xl flex items-center justify-center border border-red-500/30 transition-all duration-200 z-30 cursor-pointer shadow-md">
+                        ✕
+                    </button>
 
-                <!-- CONTENT PENGUMUMAN PENGGUNA PARKIR -->
-                <div class="relative z-10">
+                    <!-- CONTENT PENGUMUMAN PENGGUNA PARKIR -->
+                    <div class="relative z-10">
 
-                    <!-- IKON SHIELD GLOW -->
-                    <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-500/10 border border-indigo-400/30 rounded-2xl mb-4 text-indigo-400 text-3xl shadow-inner">
-                        🛡️
-                    </div>
-
-                    <!-- TEKS UTAMA WARNA PUTIH TEBAL & JELAS -->
-                    <h2 class="text-2xl md:text-3xl font-black tracking-wider text-white uppercase drop-shadow-md">
-                        PANDUAN PENGGUNA
-                    </h2>
-
-                    <p class="text-xs md:text-sm text-indigo-300 mt-1 font-semibold tracking-widest uppercase">
-                        Sistem Booking & Pelayanan Parkir Digital
-                    </p>
-
-                    <!-- ORNAMEN GARIS AKSEN BLUE -->
-                    <div class="flex items-center justify-center gap-2 my-5">
-                        <div class="h-[1px] w-16 bg-gradient-to-r from-transparent to-indigo-400"></div>
-                        <span class="text-indigo-400 text-xs">◆</span>
-                        <div class="h-[1px] w-16 bg-gradient-to-l from-transparent to-indigo-400"></div>
-                    </div>
-
-                    <!-- TEKS KETERTIBAN USER -->
-                    <p class="text-slate-400 text-xs md:text-sm font-medium">
-                        SELAMAT DATANG DI APLIKASI PARKIR ONLINE
-                    </p>
-                    <h3 class="text-xl md:text-2xl font-black text-blue-400 tracking-tight my-2 drop-shadow-[0_2px_10px_rgba(96,165,250,0.3)]">
-                        UTAMAKAN KETERTIBAN & KEAMANAN
-                    </h3>
-                    <p class="text-xs md:text-sm text-slate-300 max-w-md mx-auto font-light leading-relaxed">
-                        Demi kenyamanan bersama, mohon pastikan <strong class="text-blue-300">Nomor Plat Kendaraan</strong> yang didaftarkan sudah sesuai, kunci kendaraan Anda dengan aman, dan tidak meninggalkan barang berharga.
-                    </p>
-
-                    <!-- BADGE BANNER FITUR USER THM ADMIN -->
-                    <div class="grid grid-cols-2 gap-3 mt-6 max-w-md mx-auto">
-                        <div class="flex items-center justify-center gap-2 p-3 bg-slate-800/80 border border-indigo-500/30 rounded-2xl text-indigo-300 text-xs font-bold shadow-md">
-                            <span class="text-base">🎫</span> Tiket Digital Sah
+                        <!-- IKON SHIELD GLOW -->
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-500/10 border border-indigo-400/30 rounded-2xl mb-4 text-indigo-400 text-3xl shadow-inner">
+                            📢
                         </div>
-                        <div class="flex items-center justify-center gap-2 p-3 bg-slate-800/80 border border-blue-500/30 rounded-2xl text-blue-300 text-xs font-bold shadow-md">
-                            <span class="text-base">💸</span> Bebas Pungli
-                        </div>
-                    </div>
 
+                        <!-- 🔹 JUDUL PENGUMUMAN (DINAMIS DARI DATABASE) -->
+                        <h2 class="text-2xl md:text-3xl font-black tracking-wider text-white uppercase drop-shadow-md">
+                            {{ $activeAnnouncement->judul }}
+                        </h2>
+
+                        <p class="text-xs md:text-sm text-indigo-300 mt-1 font-semibold tracking-widest uppercase">
+                            Sistem Booking & Pelayanan Parkir Digital
+                        </p>
+
+                        <!-- ORNAMEN GARIS AKSEN BLUE -->
+                        <div class="flex items-center justify-center gap-2 my-5">
+                            <div class="h-[1px] w-16 bg-gradient-to-r from-transparent to-indigo-400"></div>
+                            <span class="text-indigo-400 text-xs">◆</span>
+                            <div class="h-[1px] w-16 bg-gradient-to-l from-transparent to-indigo-400"></div>
+                        </div>
+
+                        <!-- TEKS KETERTIBAN USER -->
+                        <p class="text-slate-400 text-xs md:text-sm font-medium">
+                            PENGUMUMAN TERBARU CONTROL CENTER
+                        </p>
+
+                        <!-- 🔹 MEDIA GAMBAR (JIKA ADA) -->
+                        @if($activeAnnouncement->media_path)
+                            <div class="my-4">
+                                <img src="{{ asset('storage/' . $activeAnnouncement->media_path) }}"
+                                     class="w-full max-h-60 object-cover rounded-2xl border border-slate-800 shadow-lg"
+                                     alt="Media Pengumuman">
+                            </div>
+                        @endif
+
+                        <!-- 🔹 ISI PENGUMUMAN (DINAMIS DARI DATABASE) -->
+                        <div class="text-xs md:text-sm text-slate-300 max-w-md mx-auto font-light leading-relaxed my-4 p-4 bg-slate-950/50 border border-slate-800 rounded-2xl text-left whitespace-pre-line">
+                            {{ $activeAnnouncement->isi }}
+                        </div>
+
+                        <!-- BADGE BANNER FITUR USER THM ADMIN -->
+                        <div class="grid grid-cols-2 gap-3 mt-6 max-w-md mx-auto">
+                            <div class="flex items-center justify-center gap-2 p-3 bg-slate-800/80 border border-indigo-500/30 rounded-2xl text-indigo-300 text-xs font-bold shadow-md">
+                                <span class="text-base">🎫</span> Tiket Digital Sah
+                            </div>
+                            <div class="flex items-center justify-center gap-2 p-3 bg-slate-800/80 border border-blue-500/30 rounded-2xl text-blue-300 text-xs font-bold shadow-md">
+                                <span class="text-base">💸</span> Bebas Pungli
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
-        </div>
+        @endif
 
         <!-- DASHBOARD BODY CONTAINER (SESUAI DARK BACKGROUND) -->
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">

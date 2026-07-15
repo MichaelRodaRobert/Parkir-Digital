@@ -1,9 +1,11 @@
 <section>
     <header>
-        <h2 class="text-lg font-medium text-gray-900">
+        <!-- Judul halaman tetap hitam tebal -->
+        <h2 class="text-lg font-bold text-gray-900">
             {{ __('Profile Information') }}
         </h2>
 
+        <!-- Deskripsi abu-abu gelap agar terbaca jelas -->
         <p class="mt-1 text-sm text-gray-600">
             {{ __("Update your account's profile information and email address.") }}
         </p>
@@ -18,14 +20,28 @@
         @method('patch')
 
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
+            <!-- Label nama -->
+            <x-input-label for="name" :value="__('Name')" class="text-gray-800" />
+
+            <!-- Input Name: bypass warna teks menggunakan style CSS inline langsung -->
+            <input id="name" name="name" type="text"
+                style="background-color: #ffffff !important; color: #000000 !important; -webkit-text-fill-color: #000000 !important;"
+                class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 font-semibold focus:border-indigo-500 focus:ring-indigo-500 shadow-sm"
+                value="{{ old('name', $user->name) }}" required autofocus autocomplete="name" />
+
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
+            <!-- Label email -->
+            <x-input-label for="email" :value="__('Email')" class="text-gray-800" />
+
+            <!-- Input Email: bypass warna teks menggunakan style CSS inline langsung -->
+            <input id="email" name="email" type="email"
+                style="background-color: #ffffff !important; color: #000000 !important; -webkit-text-fill-color: #000000 !important;"
+                class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 font-semibold focus:border-indigo-500 focus:ring-indigo-500 shadow-sm"
+                value="{{ old('email', $user->email) }}" required autocomplete="username" />
+
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
@@ -56,7 +72,7 @@
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-gray-600"
+                    class="text-sm text-green-600 font-medium"
                 >{{ __('Saved.') }}</p>
             @endif
         </div>

@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AnnouncementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +67,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/payments', [AdminController::class, 'payments'])->name('payments');
         Route::patch('/payments/{id}/approve', [AdminController::class, 'approvePayment'])->name('payments.approve');
         Route::patch('/payments/{id}/reject', [AdminController::class, 'rejectPayment'])->name('payments.reject');
+
+        // 📢 FITUR MANAJEMEN PENGUMUMAN ADMIN
+        Route::resource('announcements', AnnouncementController::class);
+        Route::patch('announcements/{announcement}/toggle', [AnnouncementController::class, 'toggle'])->name('announcements.toggle');
     });
 
 });
